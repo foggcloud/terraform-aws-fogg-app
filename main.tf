@@ -12,9 +12,17 @@ data "aws_subnet" "this" {
   id = each.value
 }
 
+data "aws_kms_alias" "efs" {
+  name = "alias/aws/elasticfilesystem"
+}
+
+
 resource "aws_efs_file_system" "this" {
+  encrypted  = true
+  kms_key_id = data.aws_kms_alias.efs.target_key_id
+
   lifecycle_policy {
-    transition_to_ia = "AFTER_90_DAYS"
+    transition_to_ia = "AFTER_30_DAYS"
   }
 }
 
